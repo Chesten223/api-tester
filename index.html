@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Tester — Free Online REST API Testing Tool</title>
+<meta name="description" content="Free online REST API testing tool. Test GET, POST, PUT, PATCH, DELETE endpoints with headers, auth, and JSON formatting. No signup required.">
+<meta name="keywords" content="API tester, REST API, Postman alternative, HTTP client, JSON tester, API testing tool, free API tester">
+<link rel="canonical" href="https://api-tester.pages.dev/">
+<meta property="og:title" content="API Tester — Free Online REST API Testing Tool">
+<meta property="og:description" content="Test REST APIs instantly in your browser. Supports all HTTP methods, headers, auth, and JSON formatting.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://api-tester.pages.dev/">
+<meta property="og:site_name" content="API Tester">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="API Tester — Free Online REST API Testing Tool">
+<meta name="twitter:description" content="Free REST API testing tool. Test GET, POST, PUT, PATCH, DELETE endpoints instantly.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "API Tester",
+  "url": "https://api-tester.pages.dev/",
+  "description": "Free online REST API testing tool. Test HTTP endpoints with headers, auth, and JSON formatting.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "browserRequirements": "Requires JavaScript"
+}
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --bg: #0d1117; --bg2: #161b22; --bg3: #21262d; --border: #30363d; --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff; --green: #3fb950; --yellow: #d29922; --red: #f85149; --purple: #bc8cff; --mono: 'SFMono-Regular', Consolas, monospace; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.5; min-height: 100vh; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+header { border-bottom: 1px solid var(--border); padding: 16px 0; }
+header .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+header h1 { font-size: 1.25rem; font-weight: 600; }
+header h1 span { color: var(--accent); }
+header nav { display: flex; gap: 16px; font-size: 0.875rem; }
+main { padding: 24px 0; }
+section { margin-bottom: 24px; }
+h2 { font-size: 1rem; margin-bottom: 12px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Request bar */
+.request-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+.method-select { background: var(--bg2); color: var(--accent); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 0.875rem; font-weight: 600; cursor: pointer; min-width: 100px; }
+.method-select:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+.url-input { flex: 1; min-width: 200px; background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 0.875rem; font-family: var(--mono); }
+.url-input:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+.send-btn { background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 10px 24px; font-size: 0.875rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.send-btn:hover { opacity: 0.9; }
+.send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.tab { padding: 8px 16px; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; font-size: 0.875rem; background: none; border-top: none; border-left: none; border-right: none; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Key-value rows */
+.kv-rows { display: flex; flex-direction: column; gap: 8px; }
+.kv-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.kv-row input { background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 0.8125rem; font-family: var(--mono); }
+.kv-row input:first-child { flex: 2; min-width: 120px; }
+.kv-row input:nth-child(2) { flex: 3; min-width: 160px; }
+.btn-sm { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: 0.75rem; cursor: pointer; }
+.btn-sm:hover { color: var(--text); border-color: var(--text2); }
+.btn-sm.danger:hover { color: var(--red); border-color: var(--red); }
+
+/* Body */
+.body-area { width: 100%; min-height: 140px; background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.8125rem; font-family: var(--mono); resize: vertical; }
+.body-area:focus { outline: 2px solid var(--accent); outline-offset: -2px; }
+.body-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+/* Auth */
+.auth-type { background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 0.8125rem; margin-bottom: 12px; }
+.auth-fields label { display: block; color: var(--text2); font-size: 0.8125rem; margin-bottom: 4px; margin-top: 8px; }
+.auth-fields input { width: 100%; background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 0.8125rem; font-family: var(--mono); }
+
+/* Response */
+.response-meta { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-size: 0.875rem; }
+.status-badge { padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 0.8125rem; font-family: var(--mono); }
+.status-2xx { background: rgba(63,185,80,0.15); color: var(--green); }
+.status-3xx { background: rgba(88,166,255,0.15); color: var(--accent); }
+.status-4xx { background: rgba(210,153,34,0.15); color: var(--yellow); }
+.status-5xx { background: rgba(248,81,73,0.15); color: var(--red); }
+.meta-item { color: var(--text2); }
+.meta-item strong { color: var(--text); }
+.response-body { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow-x: auto; max-height: 500px; overflow-y: auto; font-size: 0.8125rem; font-family: var(--mono); white-space: pre-wrap; word-break: break-word; }
+.response-headers { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 0.8125rem; font-family: var(--mono); white-space: pre-wrap; margin-top: 8px; }
+.json-key { color: var(--accent); }
+.json-string { color: var(--green); }
+.json-number { color: var(--purple); }
+.json-bool { color: var(--yellow); }
+.json-null { color: var(--red); }
+
+/* History */
+.history-list { display: flex; flex-direction: column; gap: 6px; }
+.history-item { display: flex; gap: 10px; align-items: center; padding: 8px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 0.8125rem; transition: border-color 0.15s; }
+.history-item:hover { border-color: var(--accent); }
+.history-method { font-weight: 600; min-width: 60px; }
+.history-url { flex: 1; font-family: var(--mono); color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-status { font-family: var(--mono); }
+.history-time { color: var(--text2); font-size: 0.75rem; white-space: nowrap; }
+.history-delete { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 1rem; padding: 0 4px; }
+.history-delete:hover { color: var(--red); }
+.empty-state { color: var(--text2); font-size: 0.875rem; padding: 24px; text-align: center; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 48px 0 32px; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+.card h3 { font-size: 1rem; margin-bottom: 8px; }
+.card p { color: var(--text2); font-size: 0.8125rem; }
+
+/* FAQ */
+.faq { margin: 32px 0; }
+.faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
+.faq-item summary { cursor: pointer; font-weight: 600; font-size: 0.9375rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq-item summary::after { content: '+'; color: var(--text2); font-size: 1.25rem; }
+.faq-item[open] summary::after { content: '−'; }
+.faq-item p { color: var(--text2); font-size: 0.875rem; margin-top: 8px; line-height: 1.6; }
+
+/* Email widget */
+.email-widget { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 24px; text-align: center; margin: 32px 0; }
+.email-widget h3 { margin-bottom: 8px; }
+.email-widget p { color: var(--text2); font-size: 0.875rem; margin-bottom: 16px; }
+.email-row { display: flex; gap: 8px; max-width: 400px; margin: 0 auto; }
+.email-row input { flex: 1; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 0.875rem; }
+.email-row button { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 0.875rem; cursor: pointer; white-space: nowrap; }
+
+footer { border-top: 1px solid var(--border); padding: 24px 0; text-align: center; color: var(--text2); font-size: 0.8125rem; }
+footer .cross-links { display: flex; justify-content: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .request-bar { flex-direction: column; }
+  .method-select { width: 100%; }
+  .send-btn { width: 100%; }
+  .kv-row input:first-child, .kv-row input:nth-child(2) { flex: 1; }
+  .email-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <h1>⚡ <span>API Tester</span></h1>
+    <nav>
+      <a href="#tool">Tool</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <!-- TOOL -->
+  <section id="tool">
+    <div class="request-bar">
+      <select class="method-select" id="method">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="PUT">PUT</option>
+        <option value="PATCH">PATCH</option>
+        <option value="DELETE">DELETE</option>
+        <option value="OPTIONS">OPTIONS</option>
+        <option value="HEAD">HEAD</option>
+      </select>
+      <input type="text" class="url-input" id="url" placeholder="https://jsonplaceholder.typicode.com/posts">
+      <button class="send-btn" id="sendBtn">Send</button>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div class="tabs">
+        <button class="tab active" data-tab="headers">Headers</button>
+        <button class="tab" data-tab="body">Body</button>
+        <button class="tab" data-tab="auth">Auth</button>
+      </div>
+
+      <div class="tab-panel active" id="panel-headers">
+        <div class="kv-rows" id="headerRows">
+          <div class="kv-row">
+            <input type="text" placeholder="Header name" value="Content-Type">
+            <input type="text" placeholder="Value" value="application/json">
+            <button class="btn-sm danger" onclick="removeRow(this)">✕</button>
+          </div>
+        </div>
+        <button class="btn-sm" onclick="addRow('headerRows')" style="margin-top:8px;">+ Add Header</button>
+      </div>
+
+      <div class="tab-panel" id="panel-body">
+        <textarea class="body-area" id="body" placeholder='{"key": "value"}'></textarea>
+        <div class="body-actions">
+          <button class="btn-sm" onclick="formatJson()">Format JSON</button>
+          <button class="btn-sm" onclick="document.getElementById('body').value=''">Clear</button>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="panel-auth">
+        <select class="auth-type" id="authType">
+          <option value="none">No Auth</option>
+          <option value="bearer">Bearer Token</option>
+          <option value="basic">Basic Auth</option>
+          <option value="apikey">API Key</option>
+        </select>
+        <div class="auth-fields" id="authFields"></div>
+      </div>
+    </div>
+
+    <!-- Response -->
+    <section id="responseSection" style="margin-top:24px; display:none;">
+      <h2>Response</h2>
+      <div class="response-meta" id="responseMeta"></div>
+      <div class="tabs" id="responseTabs" style="margin-top:12px;">
+        <button class="tab active" data-tab="res-body">Body</button>
+        <button class="tab" data-tab="res-headers">Headers</button>
+      </div>
+      <div class="tab-panel active" id="panel-res-body">
+        <div class="response-body" id="responseBody"></div>
+      </div>
+      <div class="tab-panel" id="panel-res-headers">
+        <div class="response-headers" id="responseHeaders"></div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;" id="actionsBar">
+      <button class="btn-sm" id="curlBtn" style="display:none;" onclick="exportCurl()">📋 Copy cURL</button>
+    </div>
+
+    <!-- History -->
+    <section style="margin-top:24px;">
+      <h2>History</h2>
+      <div class="history-list" id="historyList">
+        <div class="empty-state">No requests yet. Send your first request above.</div>
+      </div>
+    </section>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <h2>Why API Tester?</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>🚀 Zero Setup</h3>
+        <p>No installs, no accounts. Open in your browser and start testing REST APIs instantly.</p>
+      </div>
+      <div class="card">
+        <h3>🔒 Full Auth Support</h3>
+        <p>Bearer tokens, Basic auth, API keys — configure authentication in one click.</p>
+      </div>
+      <div class="card">
+        <h3>📋 cURL Export</h3>
+        <p>Generate ready-to-use cURL commands from any request. Share and reproduce API calls easily.</p>
+      </div>
+      <div class="card">
+        <h3>💾 Local History</h3>
+        <p>Last 10 requests saved in your browser. Revisit and re-send without retyping.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq">
+    <h2>FAQ</h2>
+    <details class="faq-item">
+      <summary>Is API Tester free to use?</summary>
+      <p>Yes, completely free. No signup, no limits. It runs entirely in your browser — no data is sent to any server besides the API endpoint you're testing.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Does API Tester support CORS-restricted APIs?</summary>
+      <p>API Tester makes requests directly from your browser. APIs that restrict CORS may block requests. For testing such APIs, use a browser extension to disable CORS or test from a server-side environment.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Is my data stored or sent anywhere?</summary>
+      <p>No. All request data stays in your browser's localStorage. Nothing is transmitted to any third-party server. Your history is private and can be cleared anytime.</p>
+    </details>
+  </section>
+
+  <!-- EMAIL -->
+  <section class="email-widget">
+    <h3>Stay Updated</h3>
+    <p>Get notified about new features and improvements.</p>
+    <div class="email-row">
+      <input type="email" id="emailInput" placeholder="you@example.com">
+      <button onclick="subscribe()">Subscribe</button>
+    </div>
+    <div id="emailMsg" style="margin-top:8px;font-size:0.8125rem;color:var(--green);display:none;"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>© 2025 API Tester. Free & open REST API testing tool.</p>
+    <div class="cross-links">
+      <a href="/">API Tester</a>
+      <a href="https://jsonplaceholder.typicode.com/" target="_blank" rel="noopener">JSONPlaceholder</a>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API" target="_blank" rel="noopener">Fetch API Docs</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const STORAGE_KEY = 'api_tester_history';
+const MAX_HISTORY = 10;
+
+// Tabs
+$$('.tabs').forEach(bar => {
+  bar.addEventListener('click', e => {
+    if (!e.target.classList.contains('tab')) return;
+    const parent = bar.parentElement;
+    const panel = e.target.dataset.tab;
+    bar.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    e.target.classList.add('active');
+    parent.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    const target = parent.querySelector(`#panel-${panel}`);
+    if (target) target.classList.add('active');
+  });
+});
+
+// Auth fields
+$('#authType').addEventListener('change', renderAuthFields);
+function renderAuthFields() {
+  const type = $('#authType').value;
+  const f = $('#authFields');
+  if (type === 'none') { f.innerHTML = ''; return; }
+  if (type === 'bearer') {
+    f.innerHTML = '<label>Token</label><input type="text" id="bearerToken" placeholder="eyJhbGci...">';
+  } else if (type === 'basic') {
+    f.innerHTML = '<label>Username</label><input type="text" id="basicUser" placeholder="user"><label>Password</label><input type="password" id="basicPass" placeholder="pass">';
+  } else if (type === 'apikey') {
+    f.innerHTML = '<label>Header Name</label><input type="text" id="apikeyName" placeholder="X-API-Key"><label>Value</label><input type="text" id="apikeyValue" placeholder="your-api-key">';
+  }
+}
+
+// KV rows
+function addRow(containerId) {
+  const c = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = 'kv-row';
+  row.innerHTML = '<input type="text" placeholder="Header name"><input type="text" placeholder="Value"><button class="btn-sm danger" onclick="removeRow(this)">✕</button>';
+  c.appendChild(row);
+}
+function removeRow(btn) {
+  const row = btn.closest('.kv-row');
+  const container = row.parentElement;
+  if (container.children.length > 1) row.remove();
+}
+
+// Format JSON
+function formatJson() {
+  const ta = $('#body');
+  try { ta.value = JSON.stringify(JSON.parse(ta.value), null, 2); } catch (e) { alert('Invalid JSON'); }
+}
+
+// Collect headers
+function collectHeaders() {
+  const headers = {};
+  $$('#headerRows .kv-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const k = inputs[0].value.trim();
+    const v = inputs[1].value.trim();
+    if (k) headers[k] = v;
+  });
+  return headers;
+}
+
+// Apply auth
+function applyAuth(headers) {
+  const type = $('#authType').value;
+  if (type === 'bearer') {
+    const t = $('#bearerToken')?.value.trim();
+    if (t) headers['Authorization'] = `Bearer ${t}`;
+  } else if (type === 'basic') {
+    const u = $('#basicUser')?.value.trim() || '';
+    const p = $('#basicPass')?.value.trim() || '';
+    if (u) headers['Authorization'] = `Basic ${btoa(u + ':' + p)}`;
+  } else if (type === 'apikey') {
+    const n = $('#apikeyName')?.value.trim();
+    const v = $('#apikeyValue')?.value.trim();
+    if (n && v) headers[n] = v;
+  }
+  return headers;
+}
+
+// Send request
+$('#sendBtn').addEventListener('click', sendRequest);
+async function sendRequest() {
+  const method = $('#method').value;
+  let url = $('#url').value.trim();
+  if (!url) { alert('Enter a URL'); return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  const headers = applyAuth(collectHeaders());
+  const hasBody = ['POST','PUT','PATCH'].includes(method);
+  const body = hasBody ? $('#body').value : undefined;
+
+  $('#sendBtn').disabled = true;
+  $('#sendBtn').textContent = 'Sending…';
+
+  const start = performance.now();
+  try {
+    const opts = { method, headers };
+    if (body !== undefined) opts.body = body;
+    const res = await fetch(url, opts);
+    const elapsed = Math.round(performance.now() - start);
+    const text = await res.text();
+    const size = new Blob([text]).size;
+
+    // Display
+    $('#responseSection').style.display = 'block';
+    const cls = res.status < 300 ? 'status-2xx' : res.status < 400 ? 'status-3xx' : res.status < 500 ? 'status-4xx' : 'status-5xx';
+    $('#responseMeta').innerHTML = `
+      <span class="status-badge ${cls}">${res.status} ${res.statusText}</span>
+      <span class="meta-item"><strong>${elapsed}</strong> ms</span>
+      <span class="meta-item"><strong>${formatSize(size)}</strong></span>
+    `;
+
+    // Body
+    let formatted = text;
+    try { formatted = JSON.stringify(JSON.parse(text), null, 2); } catch {}
+    $('#responseBody').innerHTML = syntaxHighlight(formatted);
+
+    // Res headers
+    const hdrLines = [];
+    res.headers.forEach((v, k) => hdrLines.push(`${k}: ${v}`));
+    $('#responseHeaders').textContent = hdrLines.join('\n') || '(no headers)';
+
+    $('#curlBtn').style.display = 'inline-block';
+
+    // History
+    saveHistory({ method, url, status: res.status, time: new Date().toISOString(), headers: collectHeaders(), body, authType: $('#authType').value });
+  } catch (e) {
+    const elapsed = Math.round(performance.now() - start);
+    $('#responseSection').style.display = 'block';
+    $('#responseMeta').innerHTML = `<span class="status-badge status-5xx">Error</span><span class="meta-item"><strong>${elapsed}</strong> ms</span>`;
+    $('#responseBody').textContent = e.message;
+    $('#responseHeaders').textContent = '';
+    $('#curlBtn').style.display = 'none';
+  }
+  $('#sendBtn').disabled = false;
+  $('#sendBtn').textContent = 'Send';
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function syntaxHighlight(json) {
+  return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+      let cls = 'json-number';
+      if (/^"/.test(m)) cls = /:$/.test(m) ? 'json-key' : 'json-string';
+      else if (/true|false/.test(m)) cls = 'json-bool';
+      else if (/null/.test(m)) cls = 'json-null';
+      return `<span class="${cls}">${m}</span>`;
+    });
+}
+
+// cURL export
+function exportCurl() {
+  const method = $('#method').value;
+  let url = $('#url').value.trim();
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  const headers = applyAuth(collectHeaders());
+  const hasBody = ['POST','PUT','PATCH'].includes(method);
+  let cmd = `curl -X ${method} '${url}'`;
+  Object.entries(headers).forEach(([k, v]) => { cmd += ` \\\n  -H '${k}: ${v}'`; });
+  if (hasBody && $('#body').value.trim()) cmd += ` \\\n  -d '${$('#body').value}'`;
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = $('#curlBtn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy cURL', 2000);
+  });
+}
+
+// History
+function getHistory() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; } }
+function saveHistory(entry) {
+  const h = getHistory();
+  h.unshift(entry);
+  if (h.length > MAX_HISTORY) h.length = MAX_HISTORY;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
+  renderHistory();
+}
+function renderHistory() {
+  const h = getHistory();
+  const list = $('#historyList');
+  if (!h.length) { list.innerHTML = '<div class="empty-state">No requests yet.</div>'; return; }
+  list.innerHTML = h.map((item, i) => {
+    const cls = item.status < 300 ? 'var(--green)' : item.status < 500 ? 'var(--yellow)' : 'var(--red)';
+    return `<div class="history-item" onclick="loadHistory(${i})">
+      <span class="history-method" style="color:var(--accent)">${item.method}</span>
+      <span class="history-url">${escHtml(item.url)}</span>
+      <span class="history-status" style="color:${cls}">${item.status || '—'}</span>
+      <span class="history-time">${new Date(item.time).toLocaleTimeString()}</span>
+      <button class="history-delete" onclick="event.stopPropagation();deleteHistory(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+function loadHistory(i) {
+  const item = getHistory()[i];
+  if (!item) return;
+  $('#method').value = item.method;
+  $('#url').value = item.url;
+  if (item.headers) {
+    const c = $('#headerRows');
+    c.innerHTML = '';
+    Object.entries(item.headers).forEach(([k, v]) => {
+      const row = document.createElement('div');
+      row.className = 'kv-row';
+      row.innerHTML = `<input type="text" placeholder="Header name" value="${escAttr(k)}"><input type="text" placeholder="Value" value="${escAttr(v)}"><button class="btn-sm danger" onclick="removeRow(this)">✕</button>`;
+      c.appendChild(row);
+    });
+    if (!c.children.length) addRow('headerRows');
+  }
+  if (item.body) $('#body').value = item.body;
+  if (item.authType) { $('#authType').value = item.authType; renderAuthFields(); }
+}
+function deleteHistory(i) {
+  const h = getHistory();
+  h.splice(i, 1);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(h));
+  renderHistory();
+}
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function escAttr(s) { return s.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+// Email
+function subscribe() {
+  const email = $('#emailInput').value.trim();
+  if (!email || !email.includes('@')) { alert('Enter a valid email'); return; }
+  const msg = $('#emailMsg');
+  msg.style.display = 'block';
+  msg.textContent = 'Thanks for subscribing!';
+  msg.style.color = 'var(--green)';
+  $('#emailInput').value = '';
+}
+
+// Init
+renderHistory();
+</script>
+</body>
+</html>
